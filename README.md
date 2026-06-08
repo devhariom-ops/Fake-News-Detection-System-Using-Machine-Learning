@@ -1,492 +1,157 @@
-# 📰 Fake News Detection System Using Machine Learning & NLP
+# Fake News Detection System
 
-## 📌 Project Overview
+An AI-powered natural language processing (NLP) and machine learning (ML) system that classifies news articles as **Real News** or **Fake News** with confidence ratings and credibility metrics. The project includes a model training pipeline, a CLI verification tool, and a premium web interface with a persistent prediction history dashboard using Flask and SQLite.
 
-The **Fake News Detection System** is an intelligent Machine Learning and Natural Language Processing (NLP) application designed to automatically identify whether a news article is **Fake** or **Real**. With the rapid expansion of digital media and social networking platforms, misinformation spreads faster than ever before, making automated verification systems increasingly important.
-
-This project utilizes a publicly available Kaggle dataset containing thousands of real and fake news articles. The collected data undergoes extensive preprocessing, text cleaning, and feature extraction using **TF-IDF (Term Frequency–Inverse Document Frequency)** techniques. Multiple Machine Learning algorithms are trained and evaluated to determine the most accurate model for news classification.
-
-The final solution is deployed as a user-friendly Flask web application where users can enter news content and instantly receive a prediction along with a confidence score.
-
----
-
-# 🎯 Problem Statement
-
-The rise of social media platforms has significantly increased the circulation of misleading information and fake news. Such misinformation can influence public opinion, create social unrest, and spread confusion among people.
-
-Traditional fact-checking methods are often manual, time-consuming, and unable to keep pace with the volume of content generated daily. Therefore, there is a need for an automated and scalable system capable of detecting fake news quickly and accurately.
-
-This project addresses this challenge by leveraging Machine Learning and NLP techniques to classify news articles based on their textual content.
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Problem Statement](#problem-statement)
+3. [Project Structure](#project-structure)
+4. [Dataset Description](#dataset-description)
+5. [Algorithms Used](#algorithms-used)
+6. [Installation & Setup](#installation--setup)
+7. [How to Run](#how-to-run)
+8. [System Features](#system-features)
+9. [Experimental Results](#experimental-results)
 
 ---
 
-# 🎯 Project Objectives
+## Introduction
+The rapid spread of misinformation, clickbait, and fake news on social media and news portals poses a significant threat to public trust and decision-making. The **Fake News Detection System** leverages natural language processing (NLP) and machine learning classifiers to assess the credibility of articles instantly, giving users a mathematical rating of news authenticity.
 
-* Develop an automated system to classify news articles as Fake or Real.
-* Apply Natural Language Processing techniques for text analysis.
-* Perform data preprocessing and feature engineering on textual datasets.
-* Train and compare multiple Machine Learning algorithms.
-* Evaluate model performance using standard classification metrics.
-* Develop a responsive Flask-based web application.
-* Store prediction history using a database system.
-* Provide confidence scores for prediction transparency.
+## Problem Statement
+Given a news article (its headline or body text), the objective is to build a binary classification system that labels the text as:
+*   **Fake News (0)**: Fabrication, clickbait, or deceptive articles.
+*   **Real News (1)**: Factual reporting from reputable agencies.
 
 ---
 
-# ✨ Key Features
-
-## 👤 User Features
-
-✔ News Article Input Interface
-
-✔ Instant Fake/Real News Prediction
-
-✔ Confidence Score Display
-
-✔ Clean and Responsive User Interface
-
-✔ Real-Time Prediction Results
-
-✔ Prediction History Tracking
-
-✔ User-Friendly Web Experience
-
----
-
-## 🔐 Admin Features
-
-✔ Total Predictions Dashboard
-
-✔ Fake News Detection Statistics
-
-✔ Real News Detection Statistics
-
-✔ SQLite Database Management
-
-✔ Historical Prediction Records
-
-✔ System Monitoring Dashboard
-
----
-
-# 🛠 Technology Stack
-
-## Programming Language
-
-* Python
-
-## Machine Learning Libraries
-
-* Scikit-Learn
-* Joblib
-
-## Natural Language Processing
-
-* NLTK
-* Porter Stemmer
-
-## Data Analysis & Processing
-
-* Pandas
-* NumPy
-
-## Data Visualization
-
-* Matplotlib
-* Seaborn
-* WordCloud
-
-## Web Development
-
-* Flask
-* HTML5
-* CSS3
-* Bootstrap 5
-
-## Database
-
-* SQLite
-
----
-
-# 📂 Project Architecture
-
-```text
+## Project Structure
+```
 FakeNewsDetection/
 │
 ├── dataset/
-│   ├── Fake.csv
-│   └── True.csv
+│   ├── Fake.csv                 # Fake news CSV (Kaggle or generated mock data)
+│   └── True.csv                 # Real news CSV (Kaggle or generated mock data)
 │
 ├── models/
-│   ├── fake_news_model.pkl
-│   └── tfidf_vectorizer.pkl
+│   ├── fake_news_model.pkl      # Best-performing trained ML model
+│   └── tfidf_vectorizer.pkl     # Fitted TF-IDF Vectorizer
 │
 ├── static/
 │   ├── css/
+│   │   └── style.css            # Modern glassmorphism style sheets
 │   ├── js/
-│   └── images/
+│   │   └── app.js               # AJAX and gauge pointer interactions
+│   └── plots/
+│       ├── correlation.png      # Classifier accuracies comparison chart
+│       ├── confusion_matrix.png # Best model confusion matrix
+│       ├── wordcloud_fake.png   # Word cloud of fake articles
+│       ├── wordcloud_true.png   # Word cloud of real articles
+│       └── top_words.png        # Bar chart of top 20 frequent terms
 │
 ├── templates/
-│   ├── index.html
-│   ├── history.html
-│   └── dashboard.html
+│   ├── index.html               # Prediction homepage
+│   └── dashboard.html           # Admin stats and prediction history
 │
-├── database/
-│   └── predictions.db
+├── notebooks/
+│   └── analysis.ipynb           # Step-by-step EDA and modeling notebook
 │
-├── train.py
-├── predict.py
-├── app.py
-├── requirements.txt
-├── README.md
-└── notebook.ipynb
+├── app.py                       # Flask application and SQLite database logic
+├── train.py                     # Training and model evaluation script
+├── predict.py                   # Interactive CLI prediction tool
+├── generate_mock_data.py        # Generates synthetic data for quick setup
+├── requirements.txt             # Project requirements list
+├── project_report.md            # Academic-style report
+└── README.md                    # This document
 ```
 
 ---
 
-# 📊 Dataset Information
+## Dataset Description
+This system supports the **Kaggle Fake and Real News Dataset** consisting of:
+*   `Fake.csv`: ~23,500 records of unverified/sensational news.
+*   `True.csv`: ~21,400 records of fact-checked news (primarily from Reuters).
+*   Columns expected: `title` (headline), `text` (body content), `subject` (category), and `date` (publication date).
 
-## Dataset Source
-
-Fake and Real News Dataset (Kaggle)
-
-The dataset contains thousands of labeled news articles categorized into:
-
-* Fake News Articles
-* Real News Articles
-
-### Dataset Attributes
-
-| Feature | Description         |
-| ------- | ------------------- |
-| title   | News Headline       |
-| text    | Full News Content   |
-| subject | News Category       |
-| date    | Publication Date    |
-| label   | Fake (0) / Real (1) |
+*Note: For immediate out-of-the-box operation, the project generates a high-quality synthetic dataset in the `dataset/` directory if the Kaggle CSV files are not present.*
 
 ---
 
-# 🔄 System Workflow
-
-```text
-Dataset Collection
-        ↓
-Data Cleaning
-        ↓
-Text Preprocessing
-        ↓
-Feature Extraction (TF-IDF)
-        ↓
-Train-Test Split
-        ↓
-Model Training
-        ↓
-Performance Evaluation
-        ↓
-Best Model Selection
-        ↓
-Model Deployment
-        ↓
-Web Application
-        ↓
-News Prediction
-```
+## Algorithms Used
+We train and evaluate four machine learning classification algorithms:
+1.  **Logistic Regression (`LogisticRegression`)**: Linear model that calculates the log-odds of a class, optimized using L2 regularization. Highly effective for high-dimensional sparse text vectors.
+2.  **Naive Bayes (`MultinomialNB`)**: Probabilistic classifier based on Bayes' Theorem, representing word distributions. Standard baseline for document classification.
+3.  **Random Forest (`RandomForestClassifier`)**: Ensemble learning model fitting multiple decision tree classifiers to prevent overfitting.
+4.  **Passive Aggressive Classifier (`PassiveAggressiveClassifier`)**: Online learning algorithm suitable for large-scale text streams. Adjusts weights dynamically based on classification errors.
 
 ---
 
-# 🧹 Data Preprocessing
+## Installation & Setup
 
-To improve model performance and eliminate noise from the dataset, the following preprocessing techniques are applied:
+1.  **Clone or Open the directory**:
+    Ensure you are in the project folder containing `requirements.txt`.
 
-### Text Cleaning
+2.  **Install dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-* Lowercase Conversion
-* URL Removal
-* Punctuation Removal
-* Special Character Removal
-* Extra Whitespace Removal
-
-### NLP Techniques
-
-* Tokenization
-* Stopword Removal
-* Stemming
-* Text Normalization
-
-### Libraries Used
-
-* NLTK
-* re
-* string
-* PorterStemmer
+3.  *(Optional)* **Download Full Kaggle Dataset**:
+    If you wish to run on the full Kaggle dataset:
+    *   Download from [Kaggle Fake and Real News Dataset](https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset).
+    *   Place `Fake.csv` and `True.csv` directly inside the `dataset/` directory.
+    *   If not provided, the pipeline generates a starting set of 500 mock news articles automatically.
 
 ---
 
-# 📈 Feature Extraction
+## How to Run
 
-The cleaned textual data is transformed into numerical vectors using:
-
-### TF-IDF Vectorization
-
-```python
-TfidfVectorizer(max_features=5000)
-```
-
-### Advantages
-
-* Converts textual data into machine-readable format.
-* Captures the importance of words.
-* Reduces the impact of common words.
-* Improves classification accuracy.
-
----
-
-# 🤖 Machine Learning Models
-
-The following classification algorithms are implemented and evaluated:
-
-## Logistic Regression
-
-* Fast and efficient
-* Strong baseline classifier
-* Suitable for text classification
-
-## Multinomial Naive Bayes
-
-* Designed for textual data
-* Lightweight and computationally efficient
-
-## Random Forest Classifier
-
-* Ensemble learning technique
-* Robust and highly accurate
-
-## Passive Aggressive Classifier
-
-* Optimized for large-scale text classification
-* Frequently used in fake news detection systems
-
----
-
-# 📊 Performance Evaluation
-
-The trained models are evaluated using the following metrics:
-
-### Accuracy
-
-Measures overall prediction correctness.
-
-### Precision
-
-Measures the quality of positive predictions.
-
-### Recall
-
-Measures the ability to identify actual positive instances.
-
-### F1-Score
-
-Balances Precision and Recall.
-
-### Confusion Matrix
-
-Provides detailed classification insights.
-
----
-
-# 📉 Data Visualization
-
-The system generates several visual analytics including:
-
-* Fake vs Real News Distribution
-* Word Cloud for Fake News
-* Word Cloud for Real News
-* Top Frequent Words Analysis
-* Model Accuracy Comparison Graph
-* Confusion Matrix Heatmap
-
-These visualizations help in understanding dataset patterns and model behavior.
-
----
-
-# 🌐 Web Application
-
-A Flask-based web application is developed to provide an interactive user interface.
-
-### Prediction Workflow
-
-```text
-User Inputs News Article
-            ↓
-Text Preprocessing
-            ↓
-TF-IDF Transformation
-            ↓
-Model Prediction
-            ↓
-Confidence Score Generation
-            ↓
-Result Display
-```
-
-### Output Example
-
-Input News:
-
-"Government announces major economic reforms to boost employment."
-
-Prediction:
-
-✅ Real News
-
-Confidence Score: 96.8%
-
----
-
-# 💾 Database Integration
-
-SQLite database stores prediction records for future analysis.
-
-### Stored Information
-
-| Field            | Description      |
-| ---------------- | ---------------- |
-| ID               | Unique Record ID |
-| News Text        | User Input News  |
-| Prediction       | Fake / Real      |
-| Confidence Score | Model Confidence |
-| Timestamp        | Date & Time      |
-
----
-
-# 📦 Installation & Setup
-
-### Clone Repository
-
-```bash
-git clone https://github.com/yourusername/FakeNewsDetection.git
-```
-
-### Navigate to Project Directory
-
-```bash
-cd FakeNewsDetection
-```
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Train Model
-
+### 1. Train the Models
+Build the TF-IDF vocabulary, fit all 4 classifiers, save comparison metrics, and serialize the best model weights:
 ```bash
 python train.py
 ```
+This command outputs accuracy comparison charts, confusion matrices, and word clouds inside the `static/plots/` folder.
 
-### Launch Web Application
+### 2. Run Interactive CLI Predictions
+Test single predictions on any news text directly from your terminal:
+```bash
+python predict.py
+```
+Type any news article body or headline when prompted.
 
+### 3. Launch Flask Web Application
+Start the interactive UI:
 ```bash
 python app.py
 ```
-
-### Open Browser
-
-```text
-http://127.0.0.1:5000
-```
+Open your web browser and navigate to `http://127.0.0.1:5000/`.
 
 ---
 
-# 📋 Requirements
+## System Features
 
-```text
-numpy
-pandas
-scikit-learn
-nltk
-matplotlib
-seaborn
-flask
-joblib
-wordcloud
-sqlite3
-```
+### Premium Glassmorphic Web App (`/`)
+*   **Live Prediction Grid**: paste articles and click Analyze. Results load instantly via AJAX without page refreshes.
+*   **Probability Score Indicator**: shows the numerical percentage confidence of the classification.
+*   **Dynamic Credibility Meter**: a color-coded indicator categorizing articles as **Low**, **Medium**, or **High Credibility** based on predictions.
+
+### Admin Dashboard (`/dashboard`)
+*   **SQLite-backed Prediction Logs**: persistent logging storing past predictions and timestamps.
+*   **System Counters**: view total analysis counts, fake news count, and real news count.
+*   **Data Visualizations**: renders word clouds, confusion matrices, and accuracy bar charts generated directly from the model training process.
+*   **System Controls**: delete database logs easily via the "Clear System History" button.
 
 ---
 
-# 📸 Project Screenshots
+## Experimental Results
+Model performance comparison (evaluated using 80/20 train/test split on synthetic dataset):
 
-Include the following screenshots:
+| Classifier Model | Accuracy Score | Precision (Real) | Recall (Real) |
+| :--- | :--- | :--- | :--- |
+| **Logistic Regression** | **100.0%** (Best) | 1.00 | 1.00 |
+| **Naive Bayes** | **100.0%** | 1.00 | 1.00 |
+| **Random Forest** | **100.0%** | 1.00 | 1.00 |
+| **Passive Aggressive Classifier** | **100.0%** | 1.00 | 1.00 |
 
-* Home Page
-* Prediction Result Page
-* Dataset Visualization
-* Word Cloud Analysis
-* Accuracy Comparison Graph
-* Confusion Matrix
-* Admin Dashboard
-
----
-
-# 🔮 Future Scope
-
-### Advanced Deep Learning Models
-
-* LSTM
-* GRU
-* BERT
-* RoBERTa
-* Transformers
-
-### Future Enhancements
-
-* Multi-Language News Detection
-* Real-Time News Verification
-* Browser Extension Integration
-* Mobile Application Development
-* Social Media Monitoring
-* Live News API Integration
-* Explainable AI Dashboard
-
----
-
-# 📚 Learning Outcomes
-
-This project provides practical experience in:
-
-* Machine Learning Pipeline Development
-* Natural Language Processing
-* Text Classification Techniques
-* Data Cleaning & Feature Engineering
-* Model Evaluation & Optimization
-* Flask Web Development
-* Database Integration
-* Data Visualization
-
----
-
-# 👨‍💻 Author
-
-**Hari Om**
-
-Master of Computer Applications (MCA)
-
-Machine Learning | Artificial Intelligence | Web Development
-
----
-
-# 📜 License
-
-This project is developed for educational, research, and academic purposes.
-
-Feel free to use, modify, and enhance the project for learning and innovation.
-
----
-
-# ⭐ Support
-
-If you found this project useful, please consider giving it a **Star ⭐** on GitHub and sharing it with others interested in Machine Learning, NLP, and Fake News Detection.
+*Note: The mock dataset contains highly distinct lexicons causing classifiers to achieve 100% accuracy quickly. On the full Kaggle dataset, typical accuracies range between 95% - 99% depending on cleaning configurations.*

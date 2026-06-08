@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Fake News Detection System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Abstract Tech Background -->
+    <div class="bg-gradient-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="fa-solid fa-shield-halved me-2 text-info"></i>
+                <span class="logo-text">VERIFY<span class="text-info">AI</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fa-solid fa-square-poll-horizontal me-1"></i> Predictor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard"><i class="fa-solid fa-chart-line me-1"></i> Admin Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <!-- Dashboard Header -->
+        <div class="row align-items-center mb-5 animate-fade-in">
+            <div class="col-md-8 text-center text-md-start text-white">
+                <h1 class="main-title font-space">System Admin Dashboard</h1>
+                <p class="subtitle opacity-75">Overview of database records, classification statistics, and machine learning models metrics.</p>
+            </div>
+            <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                <form action="/clear_history" method="POST" onsubmit="return confirm('Are you sure you want to clear all prediction history? This action cannot be undone.');">
+                    <button type="submit" class="btn btn-outline-danger px-4 py-2"><i class="fa-solid fa-trash-can me-2"></i> Clear System History</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Metric Counter Cards -->
+        <div class="row g-4 mb-5 animate-slide-up">
+            <!-- Total Predictions Card -->
+            <div class="col-md-4">
+                <div class="metric-card shadow">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-white-50 small text-uppercase fw-bold">Total Predictions</span>
+                            <h2 class="display-5 fw-bold text-white mt-1 mb-0">{{ total }}</h2>
+                        </div>
+                        <div class="metric-icon bg-info-subtle text-info p-3 rounded-4">
+                            <i class="fa-solid fa-database fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fake News Count Card -->
+            <div class="col-md-4">
+                <div class="metric-card shadow">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-white-50 small text-uppercase fw-bold">Fake News Count</span>
+                            <h2 class="display-5 fw-bold text-danger mt-1 mb-0">{{ fake }}</h2>
+                        </div>
+                        <div class="metric-icon bg-danger-subtle text-danger p-3 rounded-4">
+                            <i class="fa-solid fa-circle-exclamation fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real News Count Card -->
+            <div class="col-md-4">
+                <div class="metric-card shadow">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-white-50 small text-uppercase fw-bold">Real News Count</span>
+                            <h2 class="display-5 fw-bold text-success mt-1 mb-0">{{ real }}</h2>
+                        </div>
+                        <div class="metric-icon bg-success-subtle text-success p-3 rounded-4">
+                            <i class="fa-solid fa-circle-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Details Card -->
+        <div class="card-glass p-4 mb-5 animate-slide-up">
+            <h4 class="text-white font-space mb-3"><i class="fa-solid fa-circle-info text-info me-2"></i> Active Machine Learning Model Info</h4>
+            <div class="row text-white-50 g-3">
+                <div class="col-md-6 col-lg-3">
+                    <div class="small-title">MODEL TYPE</div>
+                    <div class="text-white fw-semibold fs-5">{{ classifier }}</div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="small-title">FEATURES TYPE</div>
+                    <div class="text-white fw-semibold fs-5">TF-IDF Vectorizer</div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="small-title">VOCABULARY SIZE</div>
+                    <div class="text-white fw-semibold fs-5">5,000 terms</div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="small-title">DATASET LOCATION</div>
+                    <div class="text-white fw-semibold fs-5">/dataset/</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Evaluation Graphs (Carousels and grids) -->
+        <div class="row g-4 mb-5 animate-slide-up">
+            <div class="col-lg-6">
+                <div class="card-glass p-4 h-100">
+                    <h3 class="text-white font-space mb-4"><i class="fa-solid fa-square-poll-horizontal text-info me-2"></i> Model Performance Summary</h3>
+                    {% if plots.correlation %}
+                    <div class="text-center p-2 rounded bg-black-20">
+                        <img src="{{ url_for('static', filename='plots/correlation.png') }}" alt="Model Accuracy Comparison" class="img-fluid rounded border border-white-10">
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-chart-column fa-3x mb-3 text-white-50"></i>
+                        <p>Accuracy comparison plot not found. Run training script to generate.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card-glass p-4 h-100">
+                    <h3 class="text-white font-space mb-4"><i class="fa-solid fa-border-all text-info me-2"></i> Confusion Matrix Heatmap</h3>
+                    {% if plots.confusion_matrix %}
+                    <div class="text-center p-2 rounded bg-black-20">
+                        <img src="{{ url_for('static', filename='plots/confusion_matrix.png') }}" alt="Confusion Matrix Heatmap" class="img-fluid rounded border border-white-10" style="max-height: 380px;">
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-table fa-3x mb-3 text-white-50"></i>
+                        <p>Confusion matrix plot not found. Run training script to generate.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- NLP Visualizations: Word Clouds and Top Words -->
+        <div class="row g-4 mb-5 animate-slide-up">
+            <div class="col-lg-4">
+                <div class="card-glass p-4 h-100">
+                    <h4 class="text-white font-space mb-3"><i class="fa-solid fa-cloud text-danger me-2"></i> Fake News Word Cloud</h4>
+                    {% if plots.wordcloud_fake %}
+                    <img src="{{ url_for('static', filename='plots/wordcloud_fake.png') }}" alt="Fake News Word Cloud" class="img-fluid rounded border border-white-10">
+                    {% else %}
+                    <div class="text-center py-4 text-muted">No Word Cloud Generated</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card-glass p-4 h-100">
+                    <h4 class="text-white font-space mb-3"><i class="fa-solid fa-cloud text-success me-2"></i> Real News Word Cloud</h4>
+                    {% if plots.wordcloud_true %}
+                    <img src="{{ url_for('static', filename='plots/wordcloud_true.png') }}" alt="Real News Word Cloud" class="img-fluid rounded border border-white-10">
+                    {% else %}
+                    <div class="text-center py-4 text-muted">No Word Cloud Generated</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card-glass p-4 h-100">
+                    <h4 class="text-white font-space mb-3"><i class="fa-solid fa-list-ol text-info me-2"></i> Top 20 Frequent Words</h4>
+                    {% if plots.top_words %}
+                    <img src="{{ url_for('static', filename='plots/top_words.png') }}" alt="Top Words" class="img-fluid rounded border border-white-10">
+                    {% else %}
+                    <div class="text-center py-4 text-muted">No Frequent Words Plot Generated</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction History Table -->
+        <div class="card-glass p-4 p-md-5 animate-slide-up">
+            <h3 class="text-white mb-4 font-space"><i class="fa-solid fa-clock-history text-info me-2"></i> Prediction History (Latest 50 Entries)</h3>
+            
+            {% if history %}
+            <div class="table-responsive">
+                <table class="table table-dark-custom table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 8%">ID</th>
+                            <th scope="col" style="width: 37%">Article Preview</th>
+                            <th scope="col" style="width: 15%">Prediction</th>
+                            <th scope="col" style="width: 12%">Confidence</th>
+                            <th scope="col" style="width: 13%">Credibility</th>
+                            <th scope="col" style="width: 15%">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in history %}
+                        <tr>
+                            <td><code>#{{ record.id }}</code></td>
+                            <td class="text-white-50"><small>{{ record.text_preview }}</small></td>
+                            <td>
+                                <span class="badge bg-{{ record.badge_class }} px-3 py-2 fs-6">{{ record.prediction }}</span>
+                            </td>
+                            <td><strong class="text-info">{{ record.probability }}%</strong></td>
+                            <td>
+                                <span class="badge bg-{{ record.cred_badge }} px-2 py-1 small">{{ record.credibility_status }}</span>
+                                <span class="d-block text-white-50 small mt-1">{{ record.credibility }}%</span>
+                            </td>
+                            <td class="text-muted"><small>{{ record.timestamp }}</small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-solid fa-inbox fa-3x mb-3 text-white-50"></i>
+                <p class="fs-5">No prediction history recorded yet. Make some predictions on the homepage!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Info Footer -->
+    <footer class="footer mt-auto py-4 text-center border-top border-white-10">
+        <div class="container">
+            <p class="text-white-50 mb-1">Fake News Detection System - Developed with Flask, Scikit-Learn & SQLite</p>
+            <p class="text-muted small">&copy; 2026. All Rights Reserved. MCA Major Project / Resume Portfolio Project.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

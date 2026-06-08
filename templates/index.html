@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector | AI-Powered News Credibility Analysis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Abstract Tech Background -->
+    <div class="bg-gradient-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="fa-solid fa-shield-halved me-2 text-info"></i>
+                <span class="logo-text">VERIFY<span class="text-info">AI</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><i class="fa-solid fa-square-poll-horizontal me-1"></i> Predictor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard"><i class="fa-solid fa-chart-line me-1"></i> Admin Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header Title -->
+                <div class="text-center mb-5 text-white animate-fade-in">
+                    <h1 class="main-title font-space">Fake News Detection System</h1>
+                    <p class="lead subtitle opacity-75">Harness the power of Machine Learning to analyze articles, detect misinformation, and evaluate credibility instantly.</p>
+                </div>
+
+                {% if not model_available %}
+                <div class="alert alert-warning border-0 shadow-lg text-center p-4 animate-fade-in" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation fa-3x mb-3 text-warning"></i>
+                    <h4 class="alert-heading">No Model Loaded!</h4>
+                    <p class="mb-0">The machine learning classifier files could not be found under the <code>models/</code> directory.</p>
+                    <p class="mt-2 text-muted">Please run the training pipeline first: <code>python train.py</code></p>
+                </div>
+                {% endif %}
+
+                <!-- Main Predictor Card -->
+                <div class="card-glass shadow-2xl p-4 p-md-5 mb-5 animate-slide-up">
+                    <form id="predictionForm">
+                        <div class="mb-4">
+                            <label for="newsText" class="form-label text-white-50 fw-semibold mb-3 fs-5">
+                                <i class="fa-solid fa-file-invoice me-2 text-info"></i> Paste News Article Text Below
+                            </label>
+                            <textarea class="form-control text-area-custom" id="newsText" rows="8" 
+                                placeholder="Paste the full body text of the news article here. For best results, enter at least 2-3 sentences..." required></textarea>
+                            <div class="text-end mt-2">
+                                <span id="charCount" class="text-white-50 fs-6 small">0 characters</span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-gradient text-white py-3 fs-5 fw-bold btn-hover-scale" id="submitBtn" {% if not model_available %}disabled{% endif %}>
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="btnSpinner" role="status"></span>
+                                <i class="fa-solid fa-wand-magic-sparkles me-2" id="btnIcon"></i> Analyze News Authenticity
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Analysis Results Section (Hidden initially) -->
+                <div class="card-glass p-4 p-md-5 d-none animate-slide-up mb-5" id="resultCard">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-4 mb-md-0 border-end border-white-10">
+                            <h3 class="text-white mb-4 font-space"><i class="fa-solid fa-square-poll-vertical me-2 text-info"></i> Analysis Summary</h3>
+                            
+                            <!-- Large Verdict Badge -->
+                            <div class="verdict-container p-4 rounded-4 mb-4 text-center">
+                                <div class="small-title text-white-50 uppercase tracking-widest mb-1 fs-6">CLASSIFICATION</div>
+                                <div class="verdict-value display-5 fw-bold" id="verdictText">REAL NEWS</div>
+                            </div>
+
+                            <!-- Probability Scores -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between text-white mb-2">
+                                    <span>Model Confidence Score</span>
+                                    <span class="fw-bold text-info" id="probabilityText">92.5%</span>
+                                </div>
+                                <div class="progress progress-custom">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 92.5%" id="probabilityBar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 ps-md-5">
+                            <h3 class="text-white mb-4 font-space"><i class="fa-solid fa-gauge-high me-2 text-info"></i> Credibility Meter</h3>
+                            
+                            <!-- Credibility Level display -->
+                            <div class="credibility-score-display text-center mb-4">
+                                <div class="text-white-50 uppercase tracking-widest mb-1 fs-6">CREDIBILITY RATING</div>
+                                <div class="credibility-badge-label fs-3 fw-bold px-4 py-2 rounded-pill d-inline-block text-white" id="credibilityStatus">HIGH CREDIBILITY</div>
+                            </div>
+
+                            <!-- Meter Gauge Indicator -->
+                            <div class="credibility-gauge-wrapper text-center">
+                                <div class="d-flex justify-content-between text-white-50 small mb-2">
+                                    <span>Low Credibility</span>
+                                    <span>Medium</span>
+                                    <span>High Credibility</span>
+                                </div>
+                                <div class="progress progress-custom progress-credibility mb-3">
+                                    <!-- Low segment (0-33%) -->
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 33%"></div>
+                                    <!-- Medium segment (34-66%) -->
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 33%"></div>
+                                    <!-- High segment (67-100%) -->
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 34%"></div>
+                                </div>
+                                <div class="position-relative w-100">
+                                    <!-- Indicator pin pointing to current level -->
+                                    <div class="gauge-pointer" id="gaugePointer" style="left: 80%;">
+                                        <i class="fa-solid fa-caret-up text-white fs-3"></i>
+                                        <div class="text-white fw-bold small" id="gaugePointerVal">80%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Footer -->
+    <footer class="footer mt-auto py-4 text-center border-top border-white-10">
+        <div class="container">
+            <p class="text-white-50 mb-1">Fake News Detection System - Developed with Flask, Scikit-Learn & SQLite</p>
+            <p class="text-muted small">&copy; 2026. All Rights Reserved. MCA Major Project / Resume Portfolio Project.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS App logic -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
